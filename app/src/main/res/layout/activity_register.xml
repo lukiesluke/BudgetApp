@@ -11,7 +11,7 @@
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:src="@mipmap/andrewlogo_round" />
+        android:src="@drawable/andrewlogo_foreground" />
 
     <EditText
         android:id="@+id/email"
