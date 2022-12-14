@@ -309,12 +309,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         monthimage.setImageResource(R.drawable.red);
                     }
 
-                    float transPercent = (transTotal / transRatio) * 100;
+                    float transPercent = checkIsInfinite(transTotal, transRatio);
                     if (transPercent > 0) {
                         entries.add(new PieEntry(transPercent, "Transport", null));
                     }
                     if (transPercent < 50) {
-                        progtrans.setText(transPercent + " %" + " used of " + transRatio + ". Status: ");
+                        progtrans.setText(checkIsZeroValue(transPercent, transTotal, transRatio));
                         trans.setImageResource(R.drawable.green);
                     } else if (transPercent >= 50 && transPercent < 100) {
                         progtrans.setText(transPercent + " %" + " used of " + transRatio + ". Status: ");
@@ -324,12 +324,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         trans.setImageResource(R.drawable.red);
                     }
 
-                    float foodPercent = (foodTotal / foodRatio) * 100;
+                    float foodPercent = checkIsInfinite(foodTotal, foodRatio);
                     if (foodPercent > 0) {
                         entries.add(new PieEntry(foodPercent, "Food", null));
                     }
                     if (foodPercent < 50) {
-                        progfood.setText(foodPercent + " %" + " used of " + foodRatio + ". Status: ");
+                        progfood.setText(checkIsZeroValue(foodPercent, foodTotal, foodRatio));
                         food.setImageResource(R.drawable.green);
                     } else if (foodPercent >= 50 && foodPercent < 100) {
                         progfood.setText(foodPercent + " %" + " used of " + foodRatio + ". Status: ");
@@ -339,12 +339,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         food.setImageResource(R.drawable.red);
                     }
 
-                    float homePercent = (houseTotal / homeRatio) * 100;
+                    float homePercent = checkIsInfinite(houseTotal, homeRatio);
                     if (homePercent > 0) {
                         entries.add(new PieEntry(homePercent, "Home", null));
                     }
                     if (homePercent < 50) {
-                        proghouse.setText(homePercent + " %" + " used of " + homeRatio + ". Status: ");
+                        proghouse.setText(checkIsZeroValue(homePercent, houseTotal, homeRatio));
                         house.setImageResource(R.drawable.green);
                     } else if (homePercent >= 50 && homePercent < 100) {
                         proghouse.setText(homePercent + " %" + " used of " + homeRatio + ". Status: ");
@@ -354,12 +354,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         house.setImageResource(R.drawable.red);
                     }
 
-                    float educPercent = (eduTotal / educRatio) * 100;
+                    float educPercent = checkIsInfinite(eduTotal, educRatio);
                     if (educPercent > 0) {
                         entries.add(new PieEntry(educPercent, "Education", null));
                     }
                     if (educPercent < 50) {
-                        progedu.setText(educPercent + " %" + " used of " + educRatio + ". Status: ");
+                        progedu.setText(checkIsZeroValue(educPercent, eduTotal, educRatio));
                         edu.setImageResource(R.drawable.green);
                     } else if (educPercent >= 50 && educPercent < 100) {
                         progedu.setText(educPercent + " %" + " used of " + educRatio + ". Status: ");
@@ -369,12 +369,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         edu.setImageResource(R.drawable.red);
                     }
 
-                    float entPercent = (entTotal / entRatio) * 100;
+                    float entPercent = checkIsInfinite(entTotal, entRatio);
                     if (entPercent > 0) {
                         entries.add(new PieEntry(entPercent, "Entertainment", null));
                     }
                     if (entPercent < 50) {
-                        progent.setText(entPercent + " %" + " used of " + entRatio + ". Status: ");
+                        progent.setText(checkIsZeroValue(entPercent, entTotal, entRatio));
                         ent.setImageResource(R.drawable.green);
                     } else if (entPercent >= 50 && entPercent < 100) {
                         progent.setText(entPercent + " %" + " used of " + entRatio + ". Status: ");
@@ -384,12 +384,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         ent.setImageResource(R.drawable.red);
                     }
 
-                    float charityPercent = (charTotal / charRatio) * 100;
+                    float charityPercent = checkIsInfinite(charTotal, charRatio);
                     if (charityPercent > 0) {
                         entries.add(new PieEntry(charityPercent, "Charity", null));
                     }
                     if (charityPercent < 50) {
-                        progcha.setText(charityPercent + " %" + " used of " + charRatio + ". Status: ");
+                        progcha.setText(checkIsZeroValue(charityPercent, charTotal, charRatio));
                         cha.setImageResource(R.drawable.green);
                     } else if (charityPercent >= 50 && charityPercent < 100) {
                         progcha.setText(charityPercent + " %" + " used of " + charRatio + ". Status: ");
@@ -399,12 +399,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         cha.setImageResource(R.drawable.red);
                     }
 
-                    float appPercent = (appTotal / appRatio) * 100;
+                    float appPercent = checkIsInfinite(appTotal, appRatio);
                     if (appPercent > 0) {
                         entries.add(new PieEntry(appPercent, "Apparel", null));
                     }
                     if (appPercent < 50) {
-                        progapp.setText(appPercent + " %" + " used of " + appRatio + ". Status: ");
+                        progapp.setText(checkIsZeroValue(appPercent, appTotal, appRatio));
                         app.setImageResource(R.drawable.green);
                     } else if (appPercent >= 50 && appPercent < 100) {
                         progapp.setText(appPercent + " %" + " used of " + appRatio + ". Status: ");
@@ -414,12 +414,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         app.setImageResource(R.drawable.red);
                     }
 
-                    float healthPercent = (healTotal / healthRatio) * 100;
+                    float healthPercent = checkIsInfinite(healTotal, healthRatio);
                     if (healthPercent > 0) {
                         entries.add(new PieEntry((healthPercent), "Health", null));
                     }
                     if (healthPercent < 50) {
-                        progheal.setText(healthPercent + " %" + " used of " + healthRatio + ". Status: ");
+                        progheal.setText(checkIsZeroValue(healthPercent, healTotal, healthRatio));
                         heal.setImageResource(R.drawable.green);
                     } else if (healthPercent >= 50 && healthPercent < 100) {
                         progheal.setText(healthPercent + " %" + " used of " + healthRatio + ". Status: ");
@@ -429,12 +429,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         heal.setImageResource(R.drawable.red);
                     }
 
-                    float personPercent = (perTotal / personRatio) * 100;
+                    float personPercent = checkIsInfinite(perTotal, personRatio);
                     if (personPercent > 0) {
                         entries.add(new PieEntry((personPercent), "Personal", null));
                     }
                     if (personPercent < 50) {
-                        progper.setText(personPercent + " %" + " used of " + personRatio + ". Status: ");
+                        progper.setText(checkIsZeroValue(personPercent, perTotal, personRatio));
                         per.setImageResource(R.drawable.green);
                     } else if (personPercent >= 50 && personPercent < 100) {
                         progper.setText(personPercent + " %" + " used of " + personRatio + ". Status: ");
@@ -444,12 +444,12 @@ public class WeeklyAnalytic extends BaseAnalytic {
                         per.setImageResource(R.drawable.red);
                     }
 
-                    float otherPercent = (otherTotal / otherRatio) * 100;
+                    float otherPercent = checkIsInfinite(otherTotal, otherRatio);
                     if (otherPercent > 0) {
                         entries.add(new PieEntry(otherPercent, "Others", null));
                     }
-                    if (transPercent < 50) {
-                        progoth.setText(otherPercent + " %" + " used of " + otherRatio + ". Status: ");
+                    if (otherPercent < 50) {
+                        progoth.setText(checkIsZeroValue(otherPercent, otherTotal, otherRatio));
                         oth.setImageResource(R.drawable.green);
                     } else if (otherPercent >= 50 && otherPercent < 100) {
                         progoth.setText(otherPercent + " %" + " used of " + otherRatio + ". Status: ");
@@ -471,4 +471,31 @@ public class WeeklyAnalytic extends BaseAnalytic {
         });
     }
 
+    private float checkIsInfinite(float total, float ratio) {
+        float value = (total / ratio) * 100;
+        if (total < 1 || ratio < 1) {
+            value = 0;
+        }
+        return value;
+    }
+
+    private String checkIsZeroValue(float percent, float total, float ratio) {
+        String message = "";
+        if (percent == 0) {
+            if (total > 0 && ratio == 0) {
+                message = "Budget is not set, but spent P" + total;
+            }
+
+            if (total == 0 && ratio > 0) {
+                message = "Budget is P" + ratio + ", spent P0.00";
+            }
+
+            if (total == 0 && ratio == 0) {
+                message = "Budget is not set and spent P0.00";
+            }
+        } else {
+            message = percent + " %" + " used of " + ratio + ". Status:";
+        }
+        return message;
+    }
 }

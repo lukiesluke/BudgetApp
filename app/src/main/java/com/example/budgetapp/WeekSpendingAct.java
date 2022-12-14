@@ -2,6 +2,7 @@ package com.example.budgetapp;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -68,6 +69,7 @@ public class WeekSpendingAct extends BaseExpenses {
 
     private void readMonthSpendingItems() {
         expensesReference.keepSynced(true);
+        Log.d("lwg", "calendarMonth: " + Integer.parseInt(calendarMonth));
         Query query = expensesReference.orderByChild("month").equalTo(Integer.parseInt(calendarMonth));
         query.addValueEventListener(new ValueEventListener() {
             @Override

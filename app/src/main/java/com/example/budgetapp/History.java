@@ -3,6 +3,7 @@ package com.example.budgetapp;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -10,67 +11,71 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetapp.adapter.TodayItemsAdapter;
 import com.example.budgetapp.data.Data;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.budgetapp.data.DataBudget;
+import com.example.budgetapp.data.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
-public class History extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+public class History extends BaseExpenses implements DatePickerDialog.OnDateSetListener {
+    private DataBudget budgetExpense;
+
     private RecyclerView recyclerView;
     private TodayItemsAdapter todayItemsAdapter;
     private List<Data> mydatalist;
-    private FirebaseAuth mauth;
-    private String oluseid = "";
-    private DatabaseReference expensesref, budgetref;
-    private Toolbar settingsbar;
-    private Button search;
-    private TextView historyamount;
+    private Toolbar settingsBar;
+    private Button search, searchAll;
+    private TextView historyAmount;
+    private DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        settingsbar = findViewById(R.id.toolbar);
-        setSupportActionBar(settingsbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("History");
+        settingsBar = findViewById(R.id.toolbar);
+        TextView appBarTitle = findViewById(R.id.appBarTitle);
+        appBarTitle.setText("History");
+        appBarTitle.setTypeface(tfRegular);
 
         search = findViewById(R.id.search);
-        historyamount = findViewById(R.id.Totalhistoryamountspent);
+        searchAll = findViewById(R.id.searchAll);
+        search.setTypeface(tfRegular);
+        searchAll.setTypeface(tfRegular);
 
-        mauth = FirebaseAuth.getInstance();
-        oluseid = mauth.getCurrentUser().getUid();
+        historyAmount = findViewById(R.id.Totalhistoryamountspent);
+        historyAmount.setTypeface(tfLight);
+
+        budgetExpense = new DataBudget();
+
         recyclerView = findViewById(R.id.recycler_view_id);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-
         recyclerView.setLayoutManager(linearLayoutManager);
+        reference = expensesReference;
 
         mydatalist = new ArrayList<>();
-        todayItemsAdapter = new TodayItemsAdapter(History.this, mydatalist, oluseid);
+        todayItemsAdapter = new TodayItemsAdapter(History.this, mydatalist, oluserid);
         recyclerView.setAdapter(todayItemsAdapter);
-        search.setOnClickListener(v -> showdatepickerdialog());
+
+        search.setOnClickListener(v -> showDatePickerDialog());
+        searchAll.setOnClickListener(view -> searchAllDate());
     }
 
-    private void showdatepickerdialog() {
+    private void showDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, this,
                 Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
@@ -78,35 +83,42 @@ public class History extends AppCompatActivity implements DatePickerDialog.OnDat
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        int months = month + 1;
-        String padded = String.format("%02d", dayOfMonth);
-        String date = dayOfMonth + " - " + "  " + month + " - " + year;
+        historyAmount.setVisibility(View.GONE);
+        String date = dayOfMonth + "-" + (month + 1) + "-" + year;
+        queryDatabase(date);
         Toast.makeText(this, date, Toast.LENGTH_SHORT).show();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Expenses").child(oluseid);
-        Query query = reference.orderByChild("date").equalTo(date);
+    }
+
+    private void searchAllDate() {
+        historyAmount.setVisibility(View.GONE);
+        queryDatabase("");
+    }
+
+    private void queryDatabase(String date) {
+        mydatalist.clear();
+        Query query;
+        if (!TextUtils.isEmpty(date)) {
+            query = reference.orderByChild("date").equalTo(date);
+        } else {
+            query = reference;
+        }
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     mydatalist.clear();
                     for (DataSnapshot ds : snapshot.getChildren()) {
-                        Data data = snapshot.getValue(Data.class);
+                        Data data = ds.getValue(Data.class);
                         mydatalist.add(data);
                     }
-                    todayItemsAdapter.notifyDataSetChanged();
                     recyclerView.setVisibility(View.VISIBLE);
 
-                    int totalamount = 0;
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        Map<String, Object> map = (Map<String, Object>) ds.getValue();
-                        Object total = map.get("Amount");
-                        int ptotal = Integer.parseInt(String.valueOf(total));
-                        totalamount += ptotal;
-                        if (totalamount > 0) {
-                            historyamount.setVisibility(View.VISIBLE);
-                            historyamount.setText("This day you spent: " + totalamount);
-                        }
+                    budgetExpense = Utils.dataItemSnapshot(snapshot);
+                    if (budgetExpense.getTotal() > 0) {
+                        historyAmount.setVisibility(View.VISIBLE);
+                        historyAmount.setText("This day you spent: " + setAmountFormat(budgetExpense.getTotal()));
                     }
                 }
             }
@@ -116,5 +128,6 @@ public class History extends AppCompatActivity implements DatePickerDialog.OnDat
                 Toast.makeText(History.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        todayItemsAdapter.notifyDataSetChanged();
     }
 }

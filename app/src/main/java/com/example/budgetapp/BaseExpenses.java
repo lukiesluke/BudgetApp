@@ -16,7 +16,7 @@ import java.util.Calendar;
 
 public class BaseExpenses extends BaseActivity {
     private final static String DATE_FORMAT = "dd-MM-yyyy";
-    private final static String DATE_FORMAT_MONTH_NAME = "MMM";
+    private final static String DATE_FORMAT_MONTH_NAME = "MMMM";
 
     protected SimpleDateFormat dateFormat;
     protected SimpleDateFormat dateFormatMonth;
@@ -30,7 +30,7 @@ public class BaseExpenses extends BaseActivity {
     protected String calendarNameMonth;
 
     protected final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    protected DatabaseReference expensesReference;
+    protected DatabaseReference expensesReference, budgetReference, personalTotalExpenses;
     protected FirebaseAuth mauth;
     protected String oluserid;
 
@@ -54,6 +54,8 @@ public class BaseExpenses extends BaseActivity {
         oluserid = mauth.getCurrentUser().getUid();
 
         expensesReference = firebaseDatabase.getReference("expenses").child(oluserid);
+        personalTotalExpenses = firebaseDatabase.getReference("personal").child(oluserid);
+        budgetReference = firebaseDatabase.getReference("Budget").child(oluserid);
     }
 
     protected String setAmountFormat(int totalAmount) {

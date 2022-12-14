@@ -3,28 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:elevation="10dp"
-    android:orientation="vertical"
-    app:cardElevation="10dp">
-
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="2dp"
+    app:cardMaxElevation="1dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/fab_margin">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/linerlayout"
-            android:layout_width="280dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginEnd="90dp"
+            android:orientation="vertical"
+            android:padding="@dimen/margin10">
+
+            <TextView
+                android:id="@+id/itemTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Item Name: "
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Item Name"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/itemTv"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/amountTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/item"
+                android:text="₱"
                 android:textColor="#000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -33,7 +55,20 @@
                 android:id="@+id/amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="₱0"
+                android:layout_below="@+id/item"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/amountTv"
+                android:text="0"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/noteTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/amount"
+                android:text="Note: "
                 android:textColor="#000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -42,7 +77,19 @@
                 android:id="@+id/note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Note"
+                android:layout_below="@+id/amount"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/noteTv"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dateTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/note"
+                android:text="Date: "
                 android:textColor="#000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -51,25 +98,23 @@
                 android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date"
+                android:layout_below="@+id/note"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/dateTv"
                 android:textColor="#000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
-        </LinearLayout>
+        </RelativeLayout>
 
         <ImageView
             android:id="@id/imageview"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/linerlayout"
-            android:src="@drawable/ic_house"></ImageView>
-
+            android:layout_alignEnd="@+id/linerlayout"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="25dp"
+            android:src="@drawable/ic_house" />
 
     </RelativeLayout>
-
 </androidx.cardview.widget.CardView>

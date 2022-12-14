@@ -61,7 +61,7 @@ public class BaseAnalytic extends BaseActivity {
 
         expensesReference = firebaseDatabase.getReference("expenses").child(oluserid);
         personalTotalExpenses = firebaseDatabase.getReference("personal").child(oluserid);
-        budgetReference = firebaseDatabase.getReference().child("Budget").child(oluserid);
+        budgetReference = firebaseDatabase.getReference("Budget").child(oluserid);
     }
 
     public SpannableString generateCenterSpannableText() {

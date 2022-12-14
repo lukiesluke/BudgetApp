@@ -2,6 +2,7 @@ package com.example.budgetapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,8 +14,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
-import com.example.budgetapp.data.BaseActivity;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.budgetapp.data.Data;
+import com.example.budgetapp.data.DataBudget;
+import com.example.budgetapp.data.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,30 +24,25 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.joda.time.DateTime;
-import org.joda.time.Months;
-import org.joda.time.MutableDateTime;
-import org.joda.time.Weeks;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Objects;
-
-public class MainActivity2nd extends BaseActivity {
+public class MainActivity2nd extends BaseExpenses {
     /* private ImageView todaybudgetimageview, weeklybudgetview, monthlybudgetview, analimageview; //*budgetbtnimageview*/;
-    private CardView analyticscardview, todaycardview, homebtn, bdgttv, historycardview, weeklycard, monthlycardview;
-    private TextView weektv, budgettv, todaytv, remaintv, monthtv;
-    private FirebaseAuth mauth;
-    private DatabaseReference expensesref, budgetref, personalref;
+    private CardView analyticsCardView, todayCardView, homebtn, bdgttv, historycardview, weeklycard, monthlycardview;
+    private TextView weektv, budgettv, todaytv, remaintv, monthtv, savetv;
+    private DatabaseReference budgetReference;
     private ImageView budget;
-    private String oluserid = "";
+
+    private DatabaseReference referenceToday, referenceWeek, referenceMonth;
 
     private int totalamonth = 0;
     private int totalbud = 0;
     private int totalbud0 = 0;
     private int totalbud1 = 0;
+    private int monthBudget = 0;
+    private int monthExpenses = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,21 +53,27 @@ public class MainActivity2nd extends BaseActivity {
         appBarTitle.setText("My Money");
         appBarTitle.setTypeface(tfRegular);
 
-        weektv = findViewById(R.id.weektv);
         bdgttv = findViewById(R.id.buttoncardview);
         budgettv = findViewById(R.id.budtv);
         todaytv = findViewById(R.id.todtv);
-        remaintv = findViewById(R.id.savetv);
+        weektv = findViewById(R.id.weektv);
         monthtv = findViewById(R.id.montv);
+        savetv = findViewById(R.id.savetv);
 
-        mauth = FirebaseAuth.getInstance();
-        oluserid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        budgetref = FirebaseDatabase.getInstance().getReference("budget").child(oluserid);
-        personalref = FirebaseDatabase.getInstance().getReference("personal").child(oluserid);
-        expensesref = FirebaseDatabase.getInstance().getReference("expenses").child(oluserid);
+        budgettv.setTypeface(tfRegular);
+        todaytv.setTypeface(tfRegular);
+        weektv.setTypeface(tfRegular);
+        monthtv.setTypeface(tfRegular);
+        savetv.setTypeface(tfRegular);
 
-        analyticscardview = findViewById(R.id.analcardview);
-        todaycardview = findViewById(R.id.todaybudgetcardview);
+        budgetReference = FirebaseDatabase.getInstance().getReference("Budget").child(oluserid);
+
+        referenceToday = FirebaseDatabase.getInstance().getReference("expenses").child(oluserid);
+        referenceWeek = FirebaseDatabase.getInstance().getReference("expenses").child(oluserid);
+        referenceMonth = FirebaseDatabase.getInstance().getReference("expenses").child(oluserid);
+
+        analyticsCardView = findViewById(R.id.analcardview);
+        todayCardView = findViewById(R.id.todaybudgetcardview);
         budget = findViewById(R.id.budgetbtnimageview);
         historycardview = findViewById(R.id.historycardview);
         weeklycard = findViewById(R.id.weeklycardview);
@@ -102,7 +105,7 @@ public class MainActivity2nd extends BaseActivity {
             }
         });
 
-        todaycardview.setOnClickListener(new View.OnClickListener() {
+        todayCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity2nd.this, TodaySpendingAct.class);
@@ -110,7 +113,7 @@ public class MainActivity2nd extends BaseActivity {
             }
         });
 
-        analyticscardview.setOnClickListener(new View.OnClickListener() {
+        analyticsCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity2nd.this, AnalyticActivity.class);
@@ -126,57 +129,25 @@ public class MainActivity2nd extends BaseActivity {
             }
         });
 
-        budgetref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        Map<String, Object> map = (Map<String, Object>) ds.getValue();
-                        Object total = map.get("Amount");
-                        int ptotal = Integer.getInteger(String.valueOf(total));
-                        totalbud0 += ptotal;
-                    }
-                    totalbud1 = totalbud0;
-
-                } else {
-                    personalref.child("budget").setValue(0);
-                    Toast.makeText(MainActivity2nd.this, "Please Set A budget", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        getBudgetAmount();
-        getTodayspentamount();
-        getweekspend();
-        getmonthspent();
-        getsavings();
+        getBudget();
+        getTodaySpentAmount();
+        getWeekSpend();
+        getMonthSpent();
     }
 
-    private void getsavings() {
-        personalref.addValueEventListener(new ValueEventListener() {
+    private void getBudget() {
+        budgetReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 if (snapshot.exists()) {
-                    int budget;
-                    if (snapshot.hasChild("Budget")) {
-                        budget = Integer.parseInt(snapshot.child("budget").getValue().toString());
-                    } else {
-                        budget = 0;
-                    }
-                    int monthspending;
-                    if (snapshot.hasChild("month")) {
-                        monthspending = Integer.parseInt(Objects.requireNonNull(snapshot.child("Month").getValue().toString()));
-                    } else {
-                        monthspending = 0;
-                    }
-                    int saving = budget - monthspending;
-                    remaintv.setText("P " + saving);
+
+                    DataBudget budgetMonthly = Utils.dataItemSnapshot(snapshot);
+                    monthBudget = budgetMonthly.getTotal();
                 }
+                int saving = monthBudget - monthExpenses;
+                savetv.setText("P" + formatNumber(saving));
+                budgettv.setText("P" + formatNumber(monthBudget));
             }
 
             @Override
@@ -186,119 +157,76 @@ public class MainActivity2nd extends BaseActivity {
         });
     }
 
-
-    private void getmonthspent() {
-        MutableDateTime epoch = new MutableDateTime();
-        epoch.setDate(0);
-        DateTime now = new DateTime();
-        Months months = Months.monthsBetween(epoch, now);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Expenses").child(oluserid);
-        Query query = reference.orderByChild("months").equalTo(months.getMonths());
+    private void getMonthSpent() {
+        referenceMonth.keepSynced(true);
+        Log.d("lwg", "calendarMonth: " + Integer.parseInt(calendarMonth));
+        Query query = referenceMonth.orderByChild("month").equalTo(Integer.parseInt(calendarMonth));
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int totalamount = 0;
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Map<String, Object> map = (Map<String, Object>) ds.getValue();
-                    Object total = map.get("Amount");
-                    ;
-                    int ptotal = Integer.getInteger(String.valueOf(total));
-                    totalamount += ptotal;
-                    monthtv.setText("P " + totalamount);
+                List<Data> myDataList = new ArrayList<>();
+                DataBudget budgetExpense;
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    myDataList.add(dataSnapshot.getValue(Data.class));
                 }
-                personalref.child("today").setValue(totalamount);
-                totalamonth = totalamount;
 
-            }
+                budgetExpense = Utils.dataItemSnapshot(snapshot);
+                monthExpenses = budgetExpense.getTotal();
+                monthtv.setText("P" + formatNumber(monthExpenses));
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void getweekspend() {
-        MutableDateTime epoch = new MutableDateTime();
-        epoch.setDate(0);
-        DateTime now = new DateTime();
-        Weeks weeks = Weeks.weeksBetween(epoch, now);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Expenses").child(oluserid);
-        Query query = reference.orderByChild("months").equalTo(weeks.getWeeks());
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int totalamount = 0;
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Map<String, Object> map = (Map<String, Object>) ds.getValue();
-                    Object total = map.get("Amount");
-                    ;
-                    int ptotal = Integer.getInteger(String.valueOf(total));
-                    totalamount += ptotal;
-                    weektv.setText("P " + totalamount);
-                }
-                personalref.child("week").setValue(totalamount);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void getTodayspentamount() {
-
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Expenses").child(oluserid);
-        Query query = reference.orderByChild("data").equalTo(date);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int totalamount = 0;
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Map<String, Object> map = (Map<String, Object>) ds.getValue();
-                    Object total = map.get("Amount");
-                    ;
-                    int ptotal = Integer.getInteger(String.valueOf(total));
-                    totalamount += ptotal;
-                    todaytv.setText("P " + totalamount);
-                }
-                personalref.child("today").setValue(totalamount);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(MainActivity2nd.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
-
-    private void getBudgetAmount() {
-        budgetref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        Map<String, Object> map = (Map<String, Object>) ds.getValue();
-                        Object total = map.get("Amount");
-                        ;
-                        int ptotal = Integer.getInteger(String.valueOf(total));
-                        totalbud0 += ptotal;
-                        budgettv.setText("P " + String.valueOf(totalbud));
-                    }
-
-                } else {
-                    totalbud1 = totalbud0;
-                    budgettv.setText("P " + String.valueOf(0));
-
-                }
+                int saving = monthBudget - monthExpenses;
+                savetv.setText("P" + formatNumber(saving));
+                budgettv.setText("P" + formatNumber(monthBudget));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
 
+    private void getWeekSpend() {
+        referenceWeek.keepSynced(true);
+        Query query = referenceWeek.orderByChild("nweek").equalTo(calendarWeek);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Data> myDataList = new ArrayList<>();
+                DataBudget budgetExpense;
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    myDataList.add(dataSnapshot.getValue(Data.class));
+                }
+
+                budgetExpense = Utils.dataItemSnapshot(snapshot);
+                weektv.setText("P" + formatNumber(budgetExpense.getTotal()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void getTodaySpentAmount() {
+        referenceToday.keepSynced(true);
+        Query query = referenceToday.orderByChild("date").equalTo(calendarDate);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Data> myDataList = new ArrayList<>();
+                DataBudget budgetExpense;
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    myDataList.add(dataSnapshot.getValue(Data.class));
+                }
+
+                budgetExpense = Utils.dataItemSnapshot(snapshot);
+                todaytv.setText("P" + formatNumber(budgetExpense.getTotal()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
@@ -317,5 +245,17 @@ public class MainActivity2nd extends BaseActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public static String formatNumber(Number number) {
+        char[] suffix = {' ', 'k', 'M', 'B', 'T', 'P', 'E'};
+        long numValue = number.longValue();
+        int value = (int) Math.floor(Math.log10(numValue));
+        int base = value / 3;
+        if (value >= 3 && base < suffix.length) {
+            return new DecimalFormat("#0.0").format(numValue / Math.pow(10, base * 3)) + suffix[base];
+        } else {
+            return new DecimalFormat("#,##0").format(numValue);
+        }
     }
 }

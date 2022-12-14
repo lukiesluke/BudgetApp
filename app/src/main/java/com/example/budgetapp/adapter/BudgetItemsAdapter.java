@@ -23,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.ViewHolder> {
+public class BudgetItemsAdapter extends RecyclerView.Adapter<BudgetItemsAdapter.ViewHolder> {
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference;
     private Context mContext;
@@ -34,7 +34,7 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
     private int amount = 0;
     private String mAuth = "";
 
-    public TodayItemsAdapter(Context mContext, List<Data> myDataList, String mAuth) {
+    public BudgetItemsAdapter(Context mContext, List<Data> myDataList, String mAuth) {
         this.mContext = mContext;
         this.myDataList = myDataList;
         this.mAuth = mAuth;
@@ -44,7 +44,7 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.retrieve_layout, parent, false);
-        databaseReference = firebaseDatabase.getReference("expenses").child(mAuth);
+        databaseReference = firebaseDatabase.getReference("Budget").child(mAuth);
         return new ViewHolder(view);
     }
 
@@ -65,44 +65,42 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
             holder.notes.setText(data.getNotes());
         }
 
-        if (data.getItem() != null) {
-            switch (data.getItem()) {
-                case "Transport":
-                    holder.imageView.setImageResource(R.drawable.ic_transport);
-                    break;
-                case "Food":
-                    holder.imageView.setImageResource(R.drawable.ic_food);
-                    break;
-                case "House":
-                    holder.imageView.setImageResource(R.drawable.ic_house);
-                    break;
-                case "Entertainment":
-                    holder.imageView.setImageResource(R.drawable.ic_entertainment);
-                    break;
-                case "Education":
-                    holder.imageView.setImageResource(R.drawable.ic_education);
-                    break;
-                case "Charity":
-                    holder.imageView.setImageResource(R.drawable.ic_consultancy);
-                    break;
-                case "Apparel":
-                    holder.imageView.setImageResource(R.drawable.ic_shirt);
-                    break;
-                case "Health":
-                    holder.imageView.setImageResource(R.drawable.ic_health);
-                    break;
-                case "Personal":
-                    holder.imageView.setImageResource(R.drawable.ic_personalcare);
-                    break;
-                case "Other":
-                    holder.imageView.setImageResource(R.drawable.ic_other);
-                    break;
-                case "Select Item":
-                    holder.imageView.setImageResource(R.drawable.ic_other);
-                default:
-                    holder.imageView.setImageResource(R.drawable.ic_other);
-                    break;
-            }
+        switch (data.getItem()) {
+            case "Transport":
+                holder.imageView.setImageResource(R.drawable.ic_transport);
+                break;
+            case "Food":
+                holder.imageView.setImageResource(R.drawable.ic_food);
+                break;
+            case "House":
+                holder.imageView.setImageResource(R.drawable.ic_house);
+                break;
+            case "Entertainment":
+                holder.imageView.setImageResource(R.drawable.ic_entertainment);
+                break;
+            case "Education":
+                holder.imageView.setImageResource(R.drawable.ic_education);
+                break;
+            case "Charity":
+                holder.imageView.setImageResource(R.drawable.ic_consultancy);
+                break;
+            case "Apparel":
+                holder.imageView.setImageResource(R.drawable.ic_shirt);
+                break;
+            case "Health":
+                holder.imageView.setImageResource(R.drawable.ic_health);
+                break;
+            case "Personal":
+                holder.imageView.setImageResource(R.drawable.ic_personalcare);
+                break;
+            case "Other":
+                holder.imageView.setImageResource(R.drawable.ic_other);
+                break;
+            case "Select Item":
+                holder.imageView.setImageResource(R.drawable.ic_other);
+            default:
+                holder.imageView.setImageResource(R.drawable.ic_other);
+                break;
         }
     }
 
@@ -151,8 +149,8 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
             mAmount.setText(String.valueOf(itemData.getAmount()));
             mAmount.setSelection(String.valueOf(itemData.getAmount()).length());
 
-            mNotes.setText(itemData.getNotes());
-            mNotes.setSelection(itemData.getNotes().length());
+            mNotes.setText(notes.getText().toString().trim());
+            mNotes.setSelection(notes.getText().toString().trim().length());
 
             Button btnDelete = mView.findViewById(R.id.btndelete);
             Button btnUpdate = mView.findViewById(R.id.btnupdate);

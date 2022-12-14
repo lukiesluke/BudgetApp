@@ -156,7 +156,7 @@ public class TodaySpendingAct extends BaseExpenses {
                 Log.d("lwg", "calendarNameMonth: " + calendarNameMonth);
 
                 Data data = new Data(item, calendarDate, id, calendarDayMonth, calendarWeek, calendarNameMonth,
-                        Integer.parseInt(Amount), Integer.parseInt(calendarDayMonth),
+                        Integer.parseInt(Amount), Integer.parseInt(calendarMonth),
                         Integer.parseInt(calendarWeek), notes);
                 expensesReference.child(Objects.requireNonNull(id)).setValue(data).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

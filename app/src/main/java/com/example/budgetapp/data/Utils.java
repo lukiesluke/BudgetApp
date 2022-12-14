@@ -1,5 +1,6 @@
 package com.example.budgetapp.data;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -102,37 +103,39 @@ public class Utils {
         if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
             for (DataSnapshot snap : snapshot.getChildren()) {
                 Data data = snap.getValue(Data.class);
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_TRANSPORT)) {
-                    totalTransport += data.getAmount();
+                if (data != null) {
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_TRANSPORT)) {
+                        totalTransport += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_FOOD)) {
+                        totalFood += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_HOUSE)) {
+                        totalHouse += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_ENTERTAINMENT)) {
+                        totalEntertainment += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_EDUCATION)) {
+                        totalEducation += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_CHARITY)) {
+                        totalCharity += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_APPAREL)) {
+                        totalHApparel += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_HEALTH)) {
+                        totalHealth += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_PERSONAL)) {
+                        totalPersonal += data.getAmount();
+                    }
+                    if (!TextUtils.isEmpty(data.getItem()) && data.getItem().equalsIgnoreCase(Constant.ITEM_OTHER)) {
+                        totalOther += data.getAmount();
+                    }
+                    total += data.getAmount();
                 }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_FOOD)) {
-                    totalFood += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_HOUSE)) {
-                    totalHouse += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_ENTERTAINMENT)) {
-                    totalEntertainment += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_EDUCATION)) {
-                    totalEducation += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_CHARITY)) {
-                    totalCharity += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_APPAREL)) {
-                    totalHApparel += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_HEALTH)) {
-                    totalHealth += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_PERSONAL)) {
-                    totalPersonal += data.getAmount();
-                }
-                if (data.getItem().equalsIgnoreCase(Constant.ITEM_OTHER)) {
-                    totalOther += data.getAmount();
-                }
-                total += data.getAmount();
             }
         }
 
