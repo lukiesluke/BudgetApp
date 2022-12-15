@@ -1,17 +1,21 @@
 package com.example.budgetapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
@@ -238,36 +242,51 @@ public class MainActivity2nd extends BaseExpenses {
     }
 
     private void monitorDailyExpenses(DataBudget dataBudgetExpenseToday, DataBudget dataBudgetMonthly) {
-
+        StringBuilder strAlert = new StringBuilder();
+        int lineNUmber = 0;
         if ((dataBudgetMonthly.getTotalTransport() - dataBudgetExpenseToday.getTotalTransport()) < 0) {
-            displayDialog(this, "Overspending item for Transport.");
+            strAlert.append("* Transport\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalFood() - dataBudgetExpenseToday.getTotalFood()) < 0) {
-            displayDialog(this, "Overspending item for Food.");
+            strAlert.append("* Food\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalHouse() - dataBudgetExpenseToday.getTotalHouse()) < 0) {
-            displayDialog(this, "Overspending item for House.");
+            strAlert.append("* House\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalEntertainment() - dataBudgetExpenseToday.getTotalEntertainment()) < 0) {
-            displayDialog(this, "Overspending item for Entertainment.");
+            strAlert.append("* Entertainment\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalEducation() - dataBudgetExpenseToday.getTotalEducation()) < 0) {
-            displayDialog(this, "Overspending item for Education.");
+            strAlert.append("* Education\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalCharity() - dataBudgetExpenseToday.getTotalCharity()) < 0) {
-            displayDialog(this, "Overspending item for Charity.");
+            strAlert.append("* Charity\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalHApparel() - dataBudgetExpenseToday.getTotalHApparel()) < 0) {
-            displayDialog(this, "Overspending item for Apparel.");
+            strAlert.append("* Apparel\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalHealth() - dataBudgetExpenseToday.getTotalHealth()) < 0) {
-            displayDialog(this, "Overspending item for Health.");
+            strAlert.append("* Health\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalPersonal() - dataBudgetExpenseToday.getTotalPersonal()) < 0) {
-            displayDialog(this, "Overspending item for Health.");
+            strAlert.append("* Personal\n");
+            lineNUmber++;
         }
         if ((dataBudgetMonthly.getTotalOther() - dataBudgetExpenseToday.getTotalOther()) < 0) {
-            displayDialog(this, "Overspending item for Other.");
+            strAlert.append("* Other\n");
+            lineNUmber++;
+        }
+
+        if (strAlert.toString().length() > 3) {
+            customDialogBox(this, "Overspending Items:", strAlert.toString(), lineNUmber);
         }
     }
 
@@ -297,5 +316,24 @@ public class MainActivity2nd extends BaseExpenses {
         } else {
             return new DecimalFormat("#,##0").format(numValue);
         }
+    }
+
+    private void customDialogBox(Context context, String title, String message, int lineNUmber) {
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View mView = inflater.inflate(R.layout.custom_dialog_layout, null);
+        myDialog.setView(mView);
+
+        AlertDialog dialog = myDialog.create();
+        TextView mTitle = mView.findViewById(R.id.title);
+        TextView mMessage = mView.findViewById(R.id.message);
+        Button mOkay = mView.findViewById(R.id.btnOkay);
+
+        mTitle.setText(title);
+        mMessage.setLines(lineNUmber);
+        mMessage.setText(message);
+
+        mOkay.setOnClickListener(view -> dialog.dismiss());
+        dialog.show();
     }
 }
