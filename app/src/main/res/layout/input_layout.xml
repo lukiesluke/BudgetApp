@@ -35,9 +35,7 @@
                 android:background="#fff"
                 android:entries="@array/items"
                 android:gravity="center"
-                android:spinnerMode="dialog">
-
-            </Spinner>
+                android:spinnerMode="dialog" />
 
             <EditText
                 android:id="@+id/amount"

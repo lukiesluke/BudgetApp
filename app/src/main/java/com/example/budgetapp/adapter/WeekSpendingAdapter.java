@@ -48,10 +48,10 @@ public class WeekSpendingAdapter extends RecyclerView.Adapter<WeekSpendingAdapte
         DecimalFormat df = new DecimalFormat("#,###.00");
         Data data = myDataList.get(position);
 
-        holder.item.setText("Item: " + data.getItem());
-        holder.amount.setText("Amount: " + df.format(data.getAmount()));
-        holder.date.setText("On: " + data.getDate());
-        holder.notes.setText("Notes: " + data.getNotes());
+        holder.item.setText(data.getItem());
+        holder.amount.setText(df.format(data.getAmount()));
+        holder.date.setText(data.getDate());
+        holder.notes.setText(data.getNotes());
         switch (data.getItem()) {
             case "Transport":
                 holder.imageView.setImageResource(R.drawable.ic_transport);
