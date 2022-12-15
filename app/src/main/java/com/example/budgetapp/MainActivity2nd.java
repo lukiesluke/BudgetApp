@@ -37,12 +37,13 @@ public class MainActivity2nd extends BaseExpenses {
     private ImageView budget;
 
     private DatabaseReference referenceToday, referenceWeek, referenceMonth;
+    private DataBudget dataBudgetMonthly;
 
     private int totalamonth = 0;
     private int totalbud = 0;
     private int totalbud0 = 0;
     private int totalbud1 = 0;
-    private int monthBudget = 0;
+    private int monthlyBudget = 0;
     private int monthExpenses = 0;
 
     @Override
@@ -145,12 +146,12 @@ public class MainActivity2nd extends BaseExpenses {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                DataBudget budgetMonthly = Utils.dataItemSnapshot(snapshot);
-                monthBudget = budgetMonthly.getTotal();
+                dataBudgetMonthly = Utils.dataItemSnapshot(snapshot);
+                monthlyBudget = dataBudgetMonthly.getTotal();
 
-                int saving = monthBudget - monthExpenses;
+                int saving = monthlyBudget - monthExpenses;
                 savetv.setText("P" + formatNumber(saving));
-                budgettv.setText("P" + formatNumber(monthBudget));
+                budgettv.setText("P" + formatNumber(monthlyBudget));
             }
 
             @Override
@@ -168,18 +169,18 @@ public class MainActivity2nd extends BaseExpenses {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Data> myDataList = new ArrayList<>();
-                DataBudget budgetExpense;
+                DataBudget dataBudgetExpenseMonthly;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     myDataList.add(dataSnapshot.getValue(Data.class));
                 }
 
-                budgetExpense = Utils.dataItemSnapshot(snapshot);
-                monthExpenses = budgetExpense.getTotal();
+                dataBudgetExpenseMonthly = Utils.dataItemSnapshot(snapshot);
+                monthExpenses = dataBudgetExpenseMonthly.getTotal();
                 monthtv.setText("P" + formatNumber(monthExpenses));
 
-                int saving = monthBudget - monthExpenses;
+                int saving = monthlyBudget - monthExpenses;
                 savetv.setText("P" + formatNumber(saving));
-                budgettv.setText("P" + formatNumber(monthBudget));
+                budgettv.setText("P" + formatNumber(monthlyBudget));
             }
 
             @Override
@@ -195,14 +196,14 @@ public class MainActivity2nd extends BaseExpenses {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Data> myDataList = new ArrayList<>();
-                DataBudget budgetExpense;
+                DataBudget dataBudgetExpenseWeekly;
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     myDataList.add(dataSnapshot.getValue(Data.class));
                 }
 
-                budgetExpense = Utils.dataItemSnapshot(snapshot);
-                weektv.setText("P" + formatNumber(budgetExpense.getTotal()));
+                dataBudgetExpenseWeekly = Utils.dataItemSnapshot(snapshot);
+                weektv.setText("P" + formatNumber(dataBudgetExpenseWeekly.getTotal()));
             }
 
             @Override
@@ -218,20 +219,56 @@ public class MainActivity2nd extends BaseExpenses {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Data> myDataList = new ArrayList<>();
-                DataBudget budgetExpense;
+                DataBudget dataBudgetExpenseToday;
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     myDataList.add(dataSnapshot.getValue(Data.class));
                 }
 
-                budgetExpense = Utils.dataItemSnapshot(snapshot);
-                todaytv.setText("P" + formatNumber(budgetExpense.getTotal()));
+                dataBudgetExpenseToday = Utils.dataItemSnapshot(snapshot);
+                monitorDailyExpenses(dataBudgetExpenseToday, dataBudgetMonthly);
+
+                todaytv.setText("P" + formatNumber(dataBudgetExpenseToday.getTotal()));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+
+    private void monitorDailyExpenses(DataBudget dataBudgetExpenseToday, DataBudget dataBudgetMonthly) {
+
+        if ((dataBudgetMonthly.getTotalTransport() - dataBudgetExpenseToday.getTotalTransport()) < 0) {
+            displayDialog(this, "Overspending item for Transport.");
+        }
+        if ((dataBudgetMonthly.getTotalFood() - dataBudgetExpenseToday.getTotalFood()) < 0) {
+            displayDialog(this, "Overspending item for Food.");
+        }
+        if ((dataBudgetMonthly.getTotalHouse() - dataBudgetExpenseToday.getTotalHouse()) < 0) {
+            displayDialog(this, "Overspending item for House.");
+        }
+        if ((dataBudgetMonthly.getTotalEntertainment() - dataBudgetExpenseToday.getTotalEntertainment()) < 0) {
+            displayDialog(this, "Overspending item for Entertainment.");
+        }
+        if ((dataBudgetMonthly.getTotalEducation() - dataBudgetExpenseToday.getTotalEducation()) < 0) {
+            displayDialog(this, "Overspending item for Education.");
+        }
+        if ((dataBudgetMonthly.getTotalCharity() - dataBudgetExpenseToday.getTotalCharity()) < 0) {
+            displayDialog(this, "Overspending item for Charity.");
+        }
+        if ((dataBudgetMonthly.getTotalHApparel() - dataBudgetExpenseToday.getTotalHApparel()) < 0) {
+            displayDialog(this, "Overspending item for Apparel.");
+        }
+        if ((dataBudgetMonthly.getTotalHealth() - dataBudgetExpenseToday.getTotalHealth()) < 0) {
+            displayDialog(this, "Overspending item for Health.");
+        }
+        if ((dataBudgetMonthly.getTotalPersonal() - dataBudgetExpenseToday.getTotalPersonal()) < 0) {
+            displayDialog(this, "Overspending item for Health.");
+        }
+        if ((dataBudgetMonthly.getTotalOther() - dataBudgetExpenseToday.getTotalOther()) < 0) {
+            displayDialog(this, "Overspending item for Other.");
+        }
     }
 
     @Override
@@ -260,29 +297,5 @@ public class MainActivity2nd extends BaseExpenses {
         } else {
             return new DecimalFormat("#,##0").format(numValue);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("lwg", "onStart MainActivity");
-//        Query query = budgetReference.orderByChild("date");
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//
-//                DataBudget budgetMonthly = Utils.dataItemSnapshot(snapshot);
-//                monthBudget = budgetMonthly.getTotal();
-//
-//                int saving = monthBudget - monthExpenses;
-//                savetv.setText("P" + formatNumber(saving));
-//                budgettv.setText("P" + formatNumber(monthBudget));
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(MainActivity2nd.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 }
