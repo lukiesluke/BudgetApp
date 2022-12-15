@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -160,7 +159,7 @@ public class TodaySpendingAct extends BaseExpenses {
                 return;
             }
             if ("Select item".equalsIgnoreCase(itemName.trim())) {
-                Toast.makeText(TodaySpendingAct.this, "Select a valid item", Toast.LENGTH_LONG).show();
+                displayDialog(TodaySpendingAct.this, "Select a valid item");
                 return;
             }
 
@@ -173,7 +172,7 @@ public class TodaySpendingAct extends BaseExpenses {
                 }
             }
             if (!containBudget) {
-                Toast.makeText(TodaySpendingAct.this, "Please set a budget for " + itemName.trim(), Toast.LENGTH_SHORT).show();
+                displayDialog(TodaySpendingAct.this, "Please set a budget for " + itemName.trim());
                 return;
             }
 
@@ -195,9 +194,9 @@ public class TodaySpendingAct extends BaseExpenses {
                 Data data = new Data(itemName, calendarDate, id, calendarDayMonth, calendarWeek, calendarNameMonth, Integer.parseInt(Amount), Integer.parseInt(calendarMonth), Integer.parseInt(calendarWeek), notes);
                 expensesReference.child(Objects.requireNonNull(id)).setValue(data).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(TodaySpendingAct.this, "Budget item added Successfully", Toast.LENGTH_SHORT).show();
+                        displayDialog(TodaySpendingAct.this, "Expenses item added Successfully");
                     } else {
-                        Toast.makeText(TodaySpendingAct.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                        displayDialog(TodaySpendingAct.this, Objects.requireNonNull(task.getException()).toString());
                     }
                     loader.dismiss();
                 });

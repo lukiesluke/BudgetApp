@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,16 +21,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 
 public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.ViewHolder> {
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference;
-    private Context mContext;
+    private final Context mContext;
     private List<Data> myDataList;
-    private String post_key = "";
-    private String item = "";
-    private String note = "";
-    private int amount = 0;
     private String mAuth = "";
 
     public TodayItemsAdapter(Context mContext, List<Data> myDataList, String mAuth) {
@@ -124,8 +120,8 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             context = itemView.getContext();
+
             item = itemView.findViewById(R.id.item);
             amount = itemView.findViewById(R.id.amount);
             date = itemView.findViewById(R.id.date);
@@ -161,11 +157,12 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
                 Data data = new Data();
                 data.setNotes(mNotes.getText().toString());
                 data.setAmount(Integer.parseInt(mAmount.getText().toString()));
+
                 databaseReference.child(itemData.getId()).updateChildren(data.toMap()).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(mContext, "Update Successfully", Toast.LENGTH_SHORT).show();
+                        displayDialog(context, "Update Successfully");
                     } else {
-                        Toast.makeText(mContext, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                        displayDialog(context, Objects.requireNonNull(task.getException()).toString());
                     }
                 });
                 dialog.dismiss();
@@ -174,14 +171,26 @@ public class TodayItemsAdapter extends RecyclerView.Adapter<TodayItemsAdapter.Vi
             btnDelete.setOnClickListener(v -> {
                 databaseReference.child(itemData.getId()).removeValue().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(mContext, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        displayDialog(context, "Deleted Successfully");
                     } else {
-                        Toast.makeText(mContext, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                        displayDialog(context, Objects.requireNonNull(task.getException()).toString());
                     }
                 });
                 dialog.dismiss();
             });
             dialog.show();
+        }
+
+        public final void displayDialog(Context cxt, String message) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(cxt);
+            builder.setMessage(message);
+
+            builder.setPositiveButton(cxt.getResources().getString(R.string.btn_ok), (dialog, which) -> {
+                dialog.dismiss();
+            });
+
+            builder.create();
+            builder.show();
         }
     }
 }
