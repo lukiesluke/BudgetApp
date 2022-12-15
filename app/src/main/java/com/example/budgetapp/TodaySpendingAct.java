@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetapp.adapter.TodayItemsAdapter;
 import com.example.budgetapp.data.Data;
+import com.example.budgetapp.data.DataBudget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,9 +41,9 @@ public class TodaySpendingAct extends BaseExpenses {
     private TodayItemsAdapter todayItemsAdapter;
     private List<Data> myDataList = new ArrayList<>();
     private String post_key = "";
-    private String item = "";
     private int amount = 0;
     private ProgressDialog loader;
+    private ArrayList<DataBudget> budget = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,22 @@ public class TodaySpendingAct extends BaseExpenses {
         recyclerView.setAdapter(todayItemsAdapter);
 
         readItems();
+
+        budgetReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                budget.clear();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    DataBudget data = snap.getValue(DataBudget.class);
+                    budget.add(data);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,17 +151,30 @@ public class TodaySpendingAct extends BaseExpenses {
         note.setVisibility(View.VISIBLE);
 
         save.setOnClickListener(v -> {
-
             String Amount = amount.getText().toString();
-            String item = itemSpinner.getSelectedItem().toString();
+            String itemName = itemSpinner.getSelectedItem().toString();
             String notes = note.getText().toString();
 
             if (TextUtils.isEmpty(Amount)) {
                 amount.setError("Amount is Required");
                 return;
             }
-            if (item.equals("Select Item")) {
-                Toast.makeText(TodaySpendingAct.this, "Select a valid item", Toast.LENGTH_SHORT).show();
+            if ("Select item".equalsIgnoreCase(itemName.trim())) {
+                Toast.makeText(TodaySpendingAct.this, "Select a valid item", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            boolean containBudget = false;
+
+            for (DataBudget dataBudget : budget) {
+                if (dataBudget.getItem().trim().equalsIgnoreCase(itemName.trim())) {
+                    containBudget = true;
+                    break;
+                }
+            }
+            if (!containBudget) {
+                Toast.makeText(TodaySpendingAct.this, "Please set a budget for " + itemName.trim(), Toast.LENGTH_SHORT).show();
+                return;
             }
 
             if (TextUtils.isEmpty(notes)) {
@@ -162,16 +192,12 @@ public class TodaySpendingAct extends BaseExpenses {
                 Log.d("lwg", "nDay: " + calendarDayMonth);
                 Log.d("lwg", "calendarNameMonth: " + calendarNameMonth);
 
-                Data data = new Data(item, calendarDate, id, calendarDayMonth, calendarWeek, calendarNameMonth,
-                        Integer.parseInt(Amount), Integer.parseInt(calendarMonth),
-                        Integer.parseInt(calendarWeek), notes);
+                Data data = new Data(itemName, calendarDate, id, calendarDayMonth, calendarWeek, calendarNameMonth, Integer.parseInt(Amount), Integer.parseInt(calendarMonth), Integer.parseInt(calendarWeek), notes);
                 expensesReference.child(Objects.requireNonNull(id)).setValue(data).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(TodaySpendingAct.this,
-                                "Budget item added Successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TodaySpendingAct.this, "Budget item added Successfully", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(TodaySpendingAct.this,
-                                task.getException().toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TodaySpendingAct.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
                     }
                     loader.dismiss();
                 });
