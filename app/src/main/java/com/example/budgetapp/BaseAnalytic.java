@@ -8,6 +8,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 
@@ -104,5 +105,14 @@ public class BaseAnalytic extends BaseActivity {
 
     protected String setAmountFormat(int totalAmount) {
         return decimalFormat.format(totalAmount);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

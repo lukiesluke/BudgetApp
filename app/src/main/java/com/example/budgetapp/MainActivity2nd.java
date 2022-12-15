@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import com.example.budgetapp.data.Data;
@@ -49,7 +50,11 @@ public class MainActivity2nd extends BaseExpenses {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_activity2nd);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         TextView appBarTitle = findViewById(R.id.appBarTitle);
+
         appBarTitle.setText("My Money");
         appBarTitle.setTypeface(tfRegular);
 

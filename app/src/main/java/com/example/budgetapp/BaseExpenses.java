@@ -2,6 +2,7 @@ package com.example.budgetapp;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 
@@ -64,5 +65,14 @@ public class BaseExpenses extends BaseActivity {
 
     protected String setAmountFormat(double totalAmount) {
         return decimalFormat.format(totalAmount);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

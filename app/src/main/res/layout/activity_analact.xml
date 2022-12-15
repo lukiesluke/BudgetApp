@@ -8,19 +8,10 @@
     android:orientation="vertical"
     tools:context=".AnalyticActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <include
+        layout="@layout/toolbar_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black">
-
-        <TextView
-            android:id="@+id/appBarTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_height="wrap_content" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/todaycardview"

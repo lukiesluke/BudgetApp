@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.budgetapp.data.Constant;
 import com.example.budgetapp.data.DataBudget;
@@ -42,6 +43,12 @@ public class MonthlyAnalytic extends BaseAnalytic {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthy_anal);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         TextView appBarTitle = findViewById(R.id.appBarTitle);
         appBarTitle.setText("Monthly Analytics");

@@ -35,7 +35,6 @@ public class History extends BaseExpenses implements DatePickerDialog.OnDateSetL
     private RecyclerView recyclerView;
     private TodayItemsAdapter todayItemsAdapter;
     private List<Data> mydatalist;
-    private Toolbar settingsBar;
     private Button search, searchAll;
     private TextView historyAmount;
     private DatabaseReference reference;
@@ -45,7 +44,12 @@ public class History extends BaseExpenses implements DatePickerDialog.OnDateSetL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        settingsBar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         TextView appBarTitle = findViewById(R.id.appBarTitle);
         appBarTitle.setText("History");
         appBarTitle.setTypeface(tfRegular);
