@@ -25,7 +25,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.TimerTask;
 
@@ -212,11 +211,8 @@ public class WeeklyAnalytic extends BaseAnalytic {
                     personalTotalExpenses.child("dayother").setValue(budgetExpense.getTotalOther());
                     personalTotalExpenses.child(Constant.ITEM_DAY_PERSONAL).setValue(budgetExpense.getTotalPersonal());
 
-                    DecimalFormat df = new DecimalFormat("#,###.00");
-                    String strTotal = df.format(budgetExpense.getTotal());
-
-                    totalweekamount.setText("Total Week's Spending: P" + strTotal);
-                    monthspent.setText("Total Spent : P " + strTotal);
+                    totalweekamount.setText("Total Week's Spending: P" + setAmountFormat(budgetExpense.getTotal()));
+                    monthspent.setText("Total Spent : P " + setAmountFormat(budgetExpense.getTotal()));
 
                     llfood.setVisibility(View.VISIBLE);
                     lltrans.setVisibility(View.VISIBLE);

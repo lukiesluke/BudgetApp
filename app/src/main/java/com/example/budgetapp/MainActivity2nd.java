@@ -140,11 +140,9 @@ public class MainActivity2nd extends BaseExpenses {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if (snapshot.exists()) {
+                DataBudget budgetMonthly = Utils.dataItemSnapshot(snapshot);
+                monthBudget = budgetMonthly.getTotal();
 
-                    DataBudget budgetMonthly = Utils.dataItemSnapshot(snapshot);
-                    monthBudget = budgetMonthly.getTotal();
-                }
                 int saving = monthBudget - monthExpenses;
                 savetv.setText("P" + formatNumber(saving));
                 budgettv.setText("P" + formatNumber(monthBudget));
@@ -257,5 +255,29 @@ public class MainActivity2nd extends BaseExpenses {
         } else {
             return new DecimalFormat("#,##0").format(numValue);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("lwg", "onStart MainActivity");
+//        Query query = budgetReference.orderByChild("date");
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                DataBudget budgetMonthly = Utils.dataItemSnapshot(snapshot);
+//                monthBudget = budgetMonthly.getTotal();
+//
+//                int saving = monthBudget - monthExpenses;
+//                savetv.setText("P" + formatNumber(saving));
+//                budgettv.setText("P" + formatNumber(monthBudget));
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(MainActivity2nd.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 }

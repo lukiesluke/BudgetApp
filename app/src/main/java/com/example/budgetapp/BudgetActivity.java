@@ -3,6 +3,7 @@ package com.example.budgetapp;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -76,30 +77,18 @@ public class BudgetActivity extends BaseExpenses {
         budgetReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-                    if (myDataList != null) {
-                        myDataList.clear();
-                    }
-
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        myDataList.add(dataSnapshot.getValue(Data.class));
-                    }
-
-                    budgetItemsAdapter.setData(myDataList);
-
-                    DataBudget budget = Utils.dataItemSnapshot(snapshot);
-                    totalBudgetAmount.setText("My Budget: ₱" + setAmountFormat(budget.getTotal()));
-
-                    int weeklyBudget = budget.getTotal() / 4;
-                    int daily = budget.getTotal() / 30;
-                    personalTotalExpenses.child("budget").setValue(budget.getTotal());
-                    personalTotalExpenses.child("weekly").setValue(weeklyBudget);
-                    personalTotalExpenses.child("daily").setValue(daily);
-                } else {
-                    personalTotalExpenses.child("budget").setValue(0);
-                    personalTotalExpenses.child("weekly").setValue(0);
-                    personalTotalExpenses.child("daily").setValue(0);
+                if (myDataList != null) {
+                    myDataList.clear();
                 }
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    myDataList.add(dataSnapshot.getValue(Data.class));
+                }
+
+                budgetItemsAdapter.setData(myDataList);
+
+                DataBudget budget = Utils.dataItemSnapshot(snapshot);
+                totalBudgetAmount.setText("My Budget: ₱" + setAmountFormat(budget.getTotal()));
             }
 
             @Override
@@ -190,4 +179,9 @@ public class BudgetActivity extends BaseExpenses {
         dialog.show();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("lwg", "onStart Budget");
+    }
 }

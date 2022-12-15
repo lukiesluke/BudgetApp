@@ -41,7 +41,7 @@ public class BaseExpenses extends BaseActivity {
 
         dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormatMonth = new SimpleDateFormat(DATE_FORMAT_MONTH_NAME);
-        decimalFormat = new DecimalFormat("#,###.00");
+        decimalFormat = new DecimalFormat("#,##0.00");
 
         calendar = Calendar.getInstance();
         calendarDate = dateFormat.format(calendar.getTime());

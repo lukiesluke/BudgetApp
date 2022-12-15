@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -27,6 +28,8 @@ public class BaseAnalytic extends BaseActivity {
 
     protected SimpleDateFormat dateFormat;
     protected SimpleDateFormat dateFormatMonth;
+
+    private DecimalFormat decimalFormat;
 
     protected Calendar calendar;
     protected String calendarDate;
@@ -55,6 +58,8 @@ public class BaseAnalytic extends BaseActivity {
         calendarMonth = String.valueOf(calendar.get(Calendar.MONTH) + 1);
         calendarDayMonth = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         calendarNameMonth = dateFormatMonth.format(calendar.getTime());
+
+        decimalFormat = new DecimalFormat("#,##0.00");
 
         mauth = FirebaseAuth.getInstance();
         oluserid = mauth.getCurrentUser().getUid();
@@ -95,5 +100,9 @@ public class BaseAnalytic extends BaseActivity {
         s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 7, s.length(), 0);
         s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 9, s.length(), 0);
         return s;
+    }
+
+    protected String setAmountFormat(int totalAmount) {
+        return decimalFormat.format(totalAmount);
     }
 }
